@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 9VA9 - Sydney Boys High School</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --sbhs-dark-blue: #2d3b45;
+            --sbhs-nav-blue: #394b58;
+            --sbhs-light-gray: #f5f5f5;
+            --sbhs-border-gray: #c7cdd1;
+            --sbhs-red: #d41e00;
+            --sbhs-card-blue: #0374b5;
+            --sbhs-card-green: #0a874b;
+            --sbhs-card-purple: #6d3fc0;
+        }
+        
+        body {
+            background-color: var(--sbhs-light-gray);
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Top Header */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--sbhs-dark-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            background-color: white;
+            color: var(--sbhs-dark-blue);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .school-name {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .canvas-name {
+            font-size: 20px;
+            font-weight: 300;
+            margin-left: 5px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: var(--sbhs-nav-blue);
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            left: 0;
+            z-index: 90;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .nav-item {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-top: 60px;
+            margin-left: 80px;
+            padding: 30px;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--sbhs-border-gray);
+        }
+        
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--sbhs-dark-blue);
+            margin-bottom: 5px;
+        }
+        
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid var(--sbhs-border-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            height: 100px;
+            position: relative;
+        }
+        
+        .card-header.blue {
+            background: linear-gradient(to right, var(--sbhs-card-blue), #028ac9);
+        }
+        
+        .card-header.green {
+            background: linear-gradient(to right, var(--sbhs-card-green), #0b9a55);
+        }
+        
+        .card-header.red {
+            background: linear-gradient(to right, var(--sbhs-red), #e8422c);
+        }
+        
+        .card-header.purple {
+            background: linear-gradient(to right, var(--sbhs-card-purple), #7e4cd3);
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--sbhs-dark-blue);
+        }
+        
+        .card-subtitle {
+            font-size: 15px;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #6c757d;
+            font-size: 14px;
+            padding-top: 15px;
+            border-top: 1px solid var(--sbhs-border-gray);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .school-name, .canvas-name {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="logo-container">
+            <div class="logo">SB</div>
+            <div>
+                <span class="school-name">SYDNEY BOYS HIGH SCHOOL</span>
+                <span class="canvas-name">Canvas 9VA9</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-book"></i>
+            <span>Courses</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Groups</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-calendar"></i>
+            <span>Calendar</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-inbox"></i>
+            <span>Inbox</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-video"></i>
+            <span>Studio</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-question-circle"></i>
+            <span>Help</span>
+        </a>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Dashboard</h1>
+        </div>
+        
+        <div class="cards-grid">
+            <!-- Mathematics Card -->
+            <div class="dashboard-card">
+                <div class="card-header blue"></div>
+                <div class="card-body">
+                    <h3 class="card-title">9 Mathematics Stage 5 U (2025)</h3>
+                    <div class="card-subtitle">9MAT U (2025)</div>
+                    <div class="card-meta">
+                        <span>2025</span>
+                        <span>10 assignments</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- English Card -->
+            <div class="dashboard-card">
+                <div class="card-header red"></div>
+                <div class="card-body">
+                    <h3 class="card-title">9 English C (2025)</h3>
+                    <div class="card-subtitle">9ENG C (2025)</div>
+                    <div class="card-meta">
+                        <span>2025</span>
+                        <span>8 assignments</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sport Card -->
+            <div class="dashboard-card">
+                <div class="card-header green"></div>
+                <div class="card-body">
+                    <h3 class="card-title">Sport</h3>
+                    <div class="card-subtitle">Sport</div>
+                    <div class="card-meta">
+                        <span>Ongoing</span>
+                        <span>3 events</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Commerce Card -->
+            <div class="dashboard-card">
+                <div class="card-header purple"></div>
+                <div class="card-body">
+                    <h3 class="card-title">9 Commerce BX (2025)</h3>
+                    <div class="card-subtitle">9COM BX (2025)</div>
+                    <div class="card-meta">
+                        <span>2025</span>
+                        <span>5 assignments</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Placeholder Card 1 -->
+            <div class="dashboard-card">
+                <div class="card-header blue"></div>
+                <div class="card-body">
+                    <h3 class="card-title">9 Geography C (2025)</h3>
+                    <div class="card-subtitle">9GEO C (2025)</div>
+                    <div class="card-meta">
+                        <span>2025</span>
+                        <span>7 assignments</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Placeholder Card 2 -->
+            <div class="dashboard-card">
+                <div class="card-header green"></div>
+                <div class="card-body">
+                    <h3 class="card-title">9 Science C (2025)</h3>
+                    <div class="card-subtitle">9SCI C (2025)</div>
+                    <div class="card-meta">
+                        <span>2025</span>
+                        <span>9 assignments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to handle active nav items
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
