@@ -538,6 +538,57 @@
             margin: 0; 
         }
         
+        /* Welcome Prompt Modal */
+        .welcome-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* Higher than game modal */
+        }
+
+        .welcome-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .welcome-modal-content h2 {
+            font-size: 24px;
+            color: var(--sbhs-dark-blue);
+            margin-bottom: 20px;
+        }
+
+        .welcome-modal-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .welcome-modal-content button {
+            padding: 10px 25px;
+            background-color: var(--sbhs-card-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .welcome-modal-content button:hover {
+            background-color: #0367a0;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .cards-grid {
@@ -559,6 +610,11 @@
             .app-footer {
                 justify-content: center;
                 text-align: center;
+            }
+
+            .welcome-modal-content {
+                margin: 20px;
+                padding: 20px;
             }
         }
         
@@ -621,17 +677,17 @@
     </div>
     
     <div class="sidebar">
-        <a href="#" class="nav-item active">
+        <a href="#" class="nav-item active" id="dashboardNavItem">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" id="groupsNavItem">
+            <i class="fas fa-users"></i>
+            <span>Groups</span>
         </a>
         <a href="#" class="nav-item">
             <i class="fas fa-gamepad"></i>
             <span>Games</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-users"></i>
-            <span>Groups</span>
         </a>
         <a href="#" class="nav-item">
             <i class="fas fa-calendar"></i>
@@ -649,7 +705,7 @@
             <i class="fas fa-video"></i>
             <span>Studio</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" id="helpNavItem">
             <i class="fas fa-question-circle"></i>
             <span>Help</span>
         </a>
@@ -700,6 +756,15 @@
         </div>
     </div>
 
+    <!-- Welcome Prompt Modal -->
+    <div class="welcome-modal-overlay" id="welcomePromptModal" style="display: none;">
+        <div class="welcome-modal-content">
+            <h2>Welcome!</h2>
+            <p>To toggle teacher near mode first click **Games** in side bar, then click **Groups** if a teacher comes, when they leave you may click **Games** again. **Remember every time you open or reload the website to click Games in the side bar even if the games page already has loaded.** To view these instructions again simply click **Help** in the side bar.</p>
+            <button id="welcomePromptOkBtn">OK</button>
+        </div>
+    </div>
+
     <footer class="app-footer">
         <div class="status-indicator">
             <div class="dot"></div>
@@ -742,6 +807,7 @@
         window.auth = auth;
         window.currentUserId = null; // Will be set on auth state change
         window.gamesData = []; // Initialize global gamesData array
+        let isGroupsMode = false; // State to track if groups mode is active
 
         // 3. Login (anonymous) and listen for auth state changes
         onAuthStateChanged(auth, async (user) => {
@@ -775,12 +841,15 @@
                     games.push({ id: doc.id, ...doc.data() });
                 });
                 window.gamesData = games; // Update global gamesData
-                window.renderGameCards(games); // Render the cards
                 
-                // If no games from Firestore, show sample data
-                if (games.length === 0) {
-                    window.renderGameCards(window.sampleGames);
-                    console.warn("No games found in Firestore. Displaying sample data.");
+                // Only render if not in groups mode, otherwise groups mode will handle its own rendering
+                if (!isGroupsMode) {
+                    window.renderGameCards(games); 
+                    // If no games from Firestore, show sample data
+                    if (games.length === 0) {
+                        window.renderGameCards(window.sampleGames);
+                        console.warn("No games found in Firestore. Displaying sample data.");
+                    }
                 }
             }, (error) => {
                 console.error("Error listening to games collection: ", error);
@@ -823,7 +892,6 @@
                 url: "https://www.mathplayground.com/embed_puzzle.html?puzzle=2048", // Using 'url'
                 thumbnail: "https://placehold.co/400x150/ADD8E6/000000?text=Math+Challenge+Image", // Using 'thumbnail'
                 color: "blue",
-                tags: ["Mathematics", "Stage 5", "2025"],
                 placeholderIcons: {
                     icon1: "fas fa-user", // Example icon
                     icon2: "fas fa-edit" // Example icon
@@ -836,7 +904,6 @@
                 url: "https://www.crazygames.com/embed/2048-puzzle", // Using 'url'
                 thumbnail: "https://placehold.co/400x150/90EE90/000000?text=2048+Puzzle+Image", // Using 'thumbnail'
                 color: "purple",
-                tags: ["Puzzle", "Strategy"],
                 placeholderIcons: {
                     icon1: "fas fa-star",
                     icon2: "fas fa-share-alt"
@@ -849,7 +916,6 @@
                 url: "https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_en.html", // Using 'url'
                 thumbnail: "https://placehold.co/400x150/FFB6C1/000000?text=Science+Lab+Image", // Using 'thumbnail'
                 color: "green",
-                tags: ["Science", "Chemistry", "Simulation"],
                 placeholderIcons: {
                     icon1: "fas fa-flask",
                     icon2: "fas fa-chart-bar"
@@ -862,7 +928,6 @@
                 url: "https://www.crazygames.com/embed/word-search", // Using 'url'
                 thumbnail: "https://placehold.co/400x150/FFD700/000000?text=Word+Search+Image", // Using 'thumbnail'
                 color: "red",
-                tags: ["Language", "Puzzle", "Vocabulary"],
                 placeholderIcons: {
                     icon1: "fas fa-book",
                     icon2: "fas fa-lightbulb"
@@ -875,7 +940,6 @@
                 url: "https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html", // Using 'url'
                 thumbnail: "https://placehold.co/400x150/DDA0DD/000000?text=Physics+Playground+Image", // Using 'thumbnail'
                 color: "orange",
-                tags: ["Physics", "Simulation", "Experiment"],
                 placeholderIcons: {
                     icon1: "fas fa-atom",
                     icon2: "fas fa-ruler"
@@ -888,13 +952,28 @@
                 url: "https://www.crazygames.com/embed/world-flags-quiz", // Using 'url'
                 thumbnail: "https://placehold.co/400x150/87CEEB/000000?text=World+Flags+Quiz+Image", // Using 'thumbnail'
                 color: "pink",
-                tags: ["Geography", "Quiz", "World"],
                 placeholderIcons: {
                     icon1: "fas fa-globe-americas",
                     icon2: "fas fa-map-marker-alt"
                 }
             }
         ];
+
+        // Placeholder games for "Groups" mode
+        window.placeholderGames = [
+            { id: "group-maths", title: "9 Maths 2025", description: "9 Maths 2025", url: "https://www.mathplayground.com/embed_puzzle.html?puzzle=2048", thumbnail: "https://placehold.co/400x150/ADD8E6/000000?text=Maths+Group", color: "blue", placeholderIcons: {} },
+            { id: "group-science", title: "9 Science 2025", description: "9 Science 2025", url: "https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_en.html", thumbnail: "https://placehold.co/400x150/90EE90/000000?text=Science+Group", color: "green", placeholderIcons: {} },
+            { id: "group-english", title: "9 English 2025", description: "9 English 2025", url: "https://www.crazygames.com/embed/word-search", thumbnail: "https://placehold.co/400x150/FFB6C1/000000?text=English+Group", color: "pink", placeholderIcons: {} },
+            { id: "group-history", title: "9 History 2025", description: "9 History 2025", url: "https://www.coolmathgames.com/0-worlds-hardest-game/play", thumbnail: "https://placehold.co/400x150/DDA0DD/000000?text=History+Group", color: "purple", placeholderIcons: {} },
+            { id: "group-geography", title: "9 Geography 2025", description: "9 Geography 2025", url: "https://www.crazygames.com/embed/world-flags-quiz", thumbnail: "https://placehold.co/400x150/87CEEB/000000?text=Geography+Group", color: "blue", placeholderIcons: {} },
+            { id: "group-art", title: "9 Art 2025", description: "9 Art 2025", url: "https://www.crazygames.com/embed/draw-and-guess", thumbnail: "https://placehold.co/400x150/FFD700/000000?text=Art+Group", color: "orange", placeholderIcons: {} },
+            { id: "group-music", title: "9 Music 2025", description: "9 Music 2025", url: "https://www.crazygames.com/embed/piano-tiles-2", thumbnail: "https://placehold.co/400x150/c0c0c0/000000?text=Music+Group", color: "red", placeholderIcons: {} },
+            { id: "group-pdhpe", title: "9 PDHPE 2025", description: "9 PDHPE 2025", url: "https://www.crazygames.com/embed/basketball-legends-2020", thumbnail: "https://placehold.co/400x150/A0A0A0/000000?text=PDHPE+Group", color: "green", placeholderIcons: {} },
+            { id: "group-technology", title: "9 Technology 2025", description: "9 Technology 2025", url: "https://www.crazygames.com/embed/paper-io-2", thumbnail: "https://placehold.co/400x150/808080/000000?text=Technology+Group", color: "purple", placeholderIcons: {} },
+            { id: "group-commerce", title: "9 Commerce 2025", description: "9 Commerce 2025", url: "https://www.crazygames.com/embed/idle-mining-tycoon", thumbnail: "https://placehold.co/400x150/606060/000000?text=Commerce+Group", color: "orange", placeholderIcons: {} },
+            { id: "group-languages", title: "9 Languages 2025", description: "9 Languages 2025", url: "https://www.crazygames.com/embed/lingo-play", thumbnail: "https://placehold.co/400x150/404040/000000?text=Languages+Group", color: "pink", placeholderIcons: {} }
+        ];
+
     </script>
 
     <script>
@@ -909,6 +988,12 @@
         const muteBtn = document.getElementById('muteBtn');
         const restartBtn = document.getElementById('restartBtn');
         const userIdDisplay = document.getElementById('currentUserIdDisplay');
+        const groupsNavItem = document.getElementById('groupsNavItem');
+        const dashboardNavItem = document.getElementById('dashboardNavItem');
+        const helpNavItem = document.getElementById('helpNavItem'); // New: Help nav item
+        const welcomePromptModal = document.getElementById('welcomePromptModal'); // New: Welcome modal
+        const welcomePromptOkBtn = document.getElementById('welcomePromptOkBtn'); // New: Welcome modal OK button
+
 
         // Currently selected game
         let currentGame = null;
@@ -923,9 +1008,6 @@
             // Set background image using the 'thumbnail' field
             const headerStyle = game.thumbnail ? `background-image: url('${game.thumbnail}');` : '';
 
-            // Generate tags HTML - now always empty as per request
-            const tagsHtml = ''; 
-            
             // Generate placeholder icons HTML
             const placeholderIconsHtml = (game.placeholderIcons) ? `
                 <div class="meta-icons">
@@ -933,6 +1015,11 @@
                     ${game.placeholderIcons.icon2 ? `<i class="${game.placeholderIcons.icon2}"></i>` : ''}
                 </div>
             ` : '';
+
+            // Shorten description if it's too long
+            const displayDescription = game.description && game.description.length > 50 ? 
+                                       game.description.substring(0, 47) + '...' : 
+                                       game.description || 'No description available';
 
 
             card.innerHTML = `
@@ -942,9 +1029,8 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="card-subtitle">${game.description || 'No description available'}</div> <!-- Description moved above title -->
+                    <div class="card-subtitle">${displayDescription}</div> <!-- Description moved above title -->
                     <h3 class="card-title">${game.title || 'Untitled Game'}</h3>
-                    ${tagsHtml} <!-- Tags removed -->
                     <div class="card-meta">
                         <div class="play-icon-only"><i class="fas fa-play-circle"></i></div> <!-- Removed "Play Now" text -->
                         ${placeholderIconsHtml} <!-- Insert placeholder icons here -->
@@ -1003,11 +1089,40 @@
             window.renderGameCards(window.sampleGames); // Fallback to sample data
         };
 
+        // Function to manage active nav items
+        function setActiveNavItem(elementId) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            const activeItem = document.getElementById(elementId);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+        }
+
+        // Function to show the welcome prompt
+        function showWelcomePrompt() {
+            if (localStorage.getItem('welcomePromptShown') !== 'true') {
+                welcomePromptModal.style.display = 'flex';
+            }
+        }
+
+        // Function to reset and show the welcome prompt
+        function resetWelcomePrompt() {
+            localStorage.removeItem('welcomePromptShown'); // Clear the flag
+            welcomePromptModal.style.display = 'flex'; // Show the modal
+        }
+
         // Initialize the page when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
             // Initial rendering with loading cards, then Firebase will update
             window.renderGameCards([]); // Clear any initial content and show empty state/loading
             
+            // Set Dashboard as active initially
+            setActiveNavItem('dashboardNavItem');
+
+            // Show welcome prompt on first load
+            showWelcomePrompt();
+
             // If Firebase is already initialized by the module script, start listener
             // The module script will call window.initializeFirebaseListener once auth is ready.
             // If for some reason auth is already ready and the listener isn't started (e.g., fast refresh),
@@ -1027,13 +1142,36 @@
                 `;
             }
 
-            // Set active nav item
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
+            // Event listener for Groups nav item
+            groupsNavItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                isGroupsMode = !isGroupsMode; // Toggle mode
+
+                if (isGroupsMode) {
+                    window.renderGameCards(window.placeholderGames);
+                    setActiveNavItem('groupsNavItem');
+                } else {
+                    window.initializeFirebaseListener(); // Re-trigger Firebase load
+                    setActiveNavItem('dashboardNavItem');
+                }
+            });
+
+            // Event listener for Help nav item
+            helpNavItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                resetWelcomePrompt(); // Show the prompt again
+                setActiveNavItem('helpNavItem');
+            });
+
+            // Set active nav item for other items (existing logic)
+            const otherNavItems = document.querySelectorAll('.nav-item:not(#groupsNavItem):not(#dashboardNavItem):not(#helpNavItem)');
+            otherNavItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    navItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+                    // If another nav item is clicked, turn off groups mode and activate the clicked item
+                    isGroupsMode = false;
+                    setActiveNavItem(this.id || 'dashboardNavItem'); // Fallback to dashboard if no ID
+                    window.initializeFirebaseListener(); // Ensure normal games load if not already
                 });
             });
             
@@ -1073,6 +1211,12 @@
                 if (gameEmbed.src) { 
                     gameEmbed.src = gameEmbed.src;
                 }
+            });
+
+            // Event listener for the OK button in the welcome prompt
+            welcomePromptOkBtn.addEventListener('click', () => {
+                welcomePromptModal.style.display = 'none';
+                localStorage.setItem('welcomePromptShown', 'true');
             });
         });
     </script>
