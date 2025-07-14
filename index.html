@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas 9VA9 - Sydney Boys High School</title>
+    <title>Dashboard</title>
+    <link rel="icon" href="https://i.ibb.co/zHSQ73jG/canvas-icon.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,14 +15,17 @@
         }
         
         :root {
+            --header-bg: #2a303a;
+            --sidebar-bg: #334451;
             --sbhs-dark-blue: #2d3b45;
-            --sbhs-nav-blue: #394b58;
             --sbhs-light-gray: #f5f5f5;
             --sbhs-border-gray: #c7cdd1;
             --sbhs-red: #d41e00;
             --sbhs-card-blue: #0374b5;
             --sbhs-card-green: #0a874b;
             --sbhs-card-purple: #6d3fc0;
+            --sbhs-card-orange: #e67e22;
+            --sbhs-card-pink: #e84393;
         }
         
         body {
@@ -38,7 +42,7 @@
             left: 0;
             right: 0;
             height: 60px;
-            background-color: var(--sbhs-dark-blue);
+            background-color: var(--header-bg);
             color: white;
             display: flex;
             align-items: center;
@@ -50,20 +54,13 @@
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
         
-        .logo {
-            background-color: white;
-            color: var(--sbhs-dark-blue);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
+        .grid-icon {
+            font-size: 22px;
+            color: white;
+            opacity: 0.9;
         }
         
         .school-name {
@@ -75,12 +72,13 @@
             font-size: 20px;
             font-weight: 300;
             margin-left: 5px;
+            color: #d0d4d8;
         }
         
         /* Sidebar */
         .sidebar {
             width: 80px;
-            background-color: var(--sbhs-nav-blue);
+            background-color: var(--sidebar-bg);
             position: fixed;
             top: 60px;
             bottom: 0;
@@ -90,6 +88,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            border-right: 1px solid var(--sbhs-border-gray);
         }
         
         .nav-item {
@@ -98,7 +97,7 @@
             flex-direction: column;
             align-items: center;
             padding: 15px 0;
-            color: rgba(255, 255, 255, 0.8);
+            color: #f0f0f0;
             text-decoration: none;
             transition: all 0.3s;
             font-size: 12px;
@@ -107,10 +106,11 @@
         .nav-item i {
             font-size: 20px;
             margin-bottom: 5px;
+            color: #f0f0f0;
         }
         
         .nav-item:hover, .nav-item.active {
-            background-color: rgba(0,0,0,0.2);
+            background-color: rgba(255,255,255,0.1);
             color: white;
         }
         
@@ -126,13 +126,48 @@
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--sbhs-border-gray);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
         .dashboard-title {
             font-size: 28px;
-            font-weight: 300;
-            color: var(--sbhs-dark-blue);
+            font-weight: 700;
+            color: #273540;
             margin-bottom: 5px;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 150, 0, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #28a745;
+        }
+        
+        .status-indicator .dot {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .user-id-display {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+            word-break: break-all; /* Ensures long IDs wrap */
         }
         
         /* Cards Grid */
@@ -149,6 +184,8 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border: 1px solid var(--sbhs-border-gray);
             transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            cursor: pointer;
         }
         
         .dashboard-card:hover {
@@ -159,6 +196,9 @@
         .card-header {
             height: 100px;
             position: relative;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f0f0; /* Fallback if image fails */
         }
         
         .card-header.blue {
@@ -177,6 +217,14 @@
             background: linear-gradient(to right, var(--sbhs-card-purple), #7e4cd3);
         }
         
+        .card-header.orange {
+            background: linear-gradient(to right, var(--sbhs-card-orange), #f39c12);
+        }
+        
+        .card-header.pink {
+            background: linear-gradient(to right, var(--sbhs-card-pink), #fd79a8);
+        }
+        
         .card-body {
             padding: 20px;
         }
@@ -192,6 +240,7 @@
             font-size: 15px;
             color: #6c757d;
             margin-bottom: 15px;
+            min-height: 40px;
         }
         
         .card-meta {
@@ -203,6 +252,202 @@
             border-top: 1px solid var(--sbhs-border-gray);
         }
         
+        .card-meta i {
+            margin-right: 5px;
+        }
+        
+        .loading-card {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .loading-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150px;
+            width: 150px;
+            height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            from { left: -150px; }
+            to { left: 100%; }
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #d41e00;
+            margin-bottom: 15px;
+        }
+        
+        /* Game Preview Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .game-modal {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px; /* Increased max-width for larger player */
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-overlay.active .game-modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: var(--sbhs-dark-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .modal-content {
+            padding: 25px;
+            max-height: calc(90vh - 100px); /* Adjust max-height based on header/footer if any */
+            overflow-y: auto;
+            flex-grow: 1; /* Allow content to grow */
+        }
+        
+        .game-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .game-player {
+            background: #f1f1ef;
+            height: 500px; /* Made larger */
+            width: 100%; /* Ensure it takes full width */
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .game-player iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Removed .game-player .player-overlay as it's not needed with a working iframe */
+        
+        .play-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--sbhs-card-blue);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .play-button:hover {
+            background: #0367a0;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            padding: 10px 18px;
+            background: #f0f0f0;
+            border: 1px solid var(--sbhs-border-gray);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background: #e0e0e0;
+            border-color: #b0b0b0;
+        }
+        
         /* Responsive design */
         @media (max-width: 768px) {
             .cards-grid {
@@ -211,6 +456,14 @@
             
             .main-content {
                 padding: 20px;
+            }
+            
+            .game-player {
+                height: 400px; /* Adjusted for smaller screens */
+            }
+
+            .game-modal {
+                max-width: 95%;
             }
         }
         
@@ -222,14 +475,36 @@
             .school-name, .canvas-name {
                 font-size: 16px;
             }
+            
+            .modal-header {
+                padding: 15px;
+            }
+            
+            .modal-content {
+                padding: 15px;
+            }
+            
+            .game-player {
+                height: 300px; /* Adjusted for very small screens */
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Top Header -->
     <div class="top-header">
         <div class="logo-container">
-            <div class="logo">SB</div>
+            <div class="grid-icon">
+                <i class="fas fa-th"></i>
+            </div>
             <div>
                 <span class="school-name">SYDNEY BOYS HIGH SCHOOL</span>
                 <span class="canvas-name">Canvas 9VA9</span>
@@ -237,15 +512,14 @@
         </div>
     </div>
     
-    <!-- Sidebar -->
     <div class="sidebar">
         <a href="#" class="nav-item active">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="fas fa-book"></i>
-            <span>Courses</span>
+            <i class="fas fa-gamepad"></i>
+            <span>Games</span>
         </a>
         <a href="#" class="nav-item">
             <i class="fas fa-users"></i>
@@ -273,104 +547,376 @@
         </a>
     </div>
     
-    <!-- Main Content -->
     <div class="main-content">
         <div class="dashboard-header">
             <h1 class="dashboard-title">Dashboard</h1>
+            <div class="status-indicator">
+                <div class="dot"></div>
+                <span>Connected to Firebase - Real-time updates active</span>
+            </div>
+            <div class="user-id-display" id="currentUserIdDisplay">User ID: Loading...</div>
         </div>
         
-        <div class="cards-grid">
-            <!-- Mathematics Card -->
-            <div class="dashboard-card">
-                <div class="card-header blue"></div>
-                <div class="card-body">
-                    <h3 class="card-title">9 Mathematics Stage 5 U (2025)</h3>
-                    <div class="card-subtitle">9MAT U (2025)</div>
-                    <div class="card-meta">
-                        <span>2025</span>
-                        <span>10 assignments</span>
-                    </div>
-                </div>
+        <div class="cards-grid" id="games-container">
+            <div class="loading-card"></div>
+            <div class="loading-card"></div>
+            <div class="loading-card"></div>
+            <div class="loading-card"></div>
+            <div class="loading-card"></div>
+            <div class="loading-card"></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="gameModal">
+        <div class="game-modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalGameTitle">Game Title</h2>
+                <button class="close-modal" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            
-            <!-- English Card -->
-            <div class="dashboard-card">
-                <div class="card-header red"></div>
-                <div class="card-body">
-                    <h3 class="card-title">9 English C (2025)</h3>
-                    <div class="card-subtitle">9ENG C (2025)</div>
-                    <div class="card-meta">
-                        <span>2025</span>
-                        <span>8 assignments</span>
-                    </div>
+            <div class="modal-content">
+                <div class="game-player">
+                    <iframe id="gameEmbed" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
                 </div>
-            </div>
-            
-            <!-- Sport Card -->
-            <div class="dashboard-card">
-                <div class="card-header green"></div>
-                <div class="card-body">
-                    <h3 class="card-title">Sport</h3>
-                    <div class="card-subtitle">Sport</div>
-                    <div class="card-meta">
-                        <span>Ongoing</span>
-                        <span>3 events</span>
-                    </div>
+                <p class="game-description" id="modalGameDescription">Game description will appear here.</p>
+                
+                <div class="controls">
+                    <button class="control-btn" id="muteBtn">
+                        <i class="fas fa-volume-up"></i> Mute
+                    </button>
+                    <button class="control-btn" id="restartBtn">
+                        <i class="fas fa-redo"></i> Restart
+                    </button>
                 </div>
-            </div>
-            
-            <!-- Commerce Card -->
-            <div class="dashboard-card">
-                <div class="card-header purple"></div>
-                <div class="card-body">
-                    <h3 class="card-title">9 Commerce BX (2025)</h3>
-                    <div class="card-subtitle">9COM BX (2025)</div>
-                    <div class="card-meta">
-                        <span>2025</span>
-                        <span>5 assignments</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Placeholder Card 1 -->
-            <div class="dashboard-card">
-                <div class="card-header blue"></div>
-                <div class="card-body">
-                    <h3 class="card-title">9 Geography C (2025)</h3>
-                    <div class="card-subtitle">9GEO C (2025)</div>
-                    <div class="card-meta">
-                        <span>2025</span>
-                        <span>7 assignments</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Placeholder Card 2 -->
-            <div class="dashboard-card">
-                <div class="card-header green"></div>
-                <div class="card-body">
-                    <h3 class="card-title">9 Science C (2025)</h3>
-                    <div class="card-subtitle">9SCI C (2025)</div>
-                    <div class="card-meta">
-                        <span>2025</span>
-                        <span>9 assignments</span>
-                    </div>
-                </div>
+                
+                <button class="play-button" id="fullScreenButton">
+                    <i class="fas fa-expand"></i> Full Screen
+                </button>
             </div>
         </div>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            onSnapshot, // Using onSnapshot for real-time updates
+            getDocs, // Kept for reference, but onSnapshot is used for real-time display
+            addDoc,
+            deleteDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 1. Your Firebase config - IMPORTANT: Use the __firebase_config global variable if available
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyAOrYAgq8s_mxgVTHA4__hoRTg5u8f85MM",
+            authDomain: "game-portal-c0b44.firebaseapp.com",
+            projectId: "game-portal-c0b44",
+            storageBucket: "game-portal-c0b44.firebasestorage.app",
+            messagingSenderId: "94063829166",
+            appId: "1:94063829166:web:45cba1458d39609c4c4d3f"
+        };
+        
+        // 2. Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Expose Firebase instances globally for the main script
+        window.firebaseApp = app;
+        window.db = db;
+        window.auth = auth;
+        window.currentUserId = null; // Will be set on auth state change
+        window.gamesData = []; // Initialize global gamesData array
+
+        // 3. Login (anonymous) and listen for auth state changes
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("Logged in as:", user.uid);
+                window.currentUserId = user.uid;
+                // Update the User ID display
+                const userIdDisplay = document.getElementById('currentUserIdDisplay');
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `User ID: ${user.uid}`;
+                }
+                // Once authenticated, start listening for games
+                window.initializeFirebaseListener(); 
+            } else {
+                // If no user, sign in anonymously
+                await signInAnonymously(auth);
+            }
+        });
+
+        // Function to load games from Firebase using onSnapshot for real-time updates
+        window.initializeFirebaseListener = function() {
+            if (!window.db) {
+                console.error("Firestore DB not initialized yet.");
+                window.showErrorState();
+                return;
+            }
+            // Use onSnapshot for real-time updates
+            onSnapshot(collection(window.db, "games"), (snapshot) => {
+                const games = [];
+                snapshot.forEach((doc) => {
+                    games.push({ id: doc.id, ...doc.data() });
+                });
+                window.gamesData = games; // Update global gamesData
+                window.renderGameCards(games); // Render the cards
+                
+                // If no games from Firestore, show sample data
+                if (games.length === 0) {
+                    window.renderGameCards(window.sampleGames);
+                    console.warn("No games found in Firestore. Displaying sample data.");
+                }
+            }, (error) => {
+                console.error("Error listening to games collection: ", error);
+                window.showErrorState(); // Show error and fallback to sample data
+            });
+        };
+
+        // 5. Add game to Firebase (exposed globally)
+        window.addGameToFirestore = async function(game) {
+            try {
+                await addDoc(collection(window.db, "games"), game);
+                // No need to call loadGamesFromFirestore, onSnapshot will handle it
+                console.log(`${game.title} added successfully!`);
+            } catch (error) {
+                console.error("Error adding game to Firestore:", error);
+            }
+        };
+
+        // 6. Delete game from Firebase (exposed globally)
+        window.deleteGameFromFirestore = async function(id) {
+            try {
+                await deleteDoc(doc(window.db, "games", id));
+                // No need to call loadGamesFromFirestore, onSnapshot will handle it
+                console.log('Game deleted successfully!');
+            } catch (error) {
+                console.error("Error deleting game from Firestore:", error);
+            }
+        };
+
+        // Sample game data for demonstration (fallback)
+        // IMPORTANT: Many websites block their content from being embedded in iframes
+        // due to security policies (like X-Frame-Options). Ensure your embedUrl points
+        // to a source that allows embedding. Check your browser's developer console (F12)
+        // for "Refused to display '...' in a frame because it set 'X-Frame-Options' to 'deny'." errors.
+        window.sampleGames = [
+            {
+                id: "sample1",
+                title: "Math Challenge",
+                description: "Test your math skills in this exciting puzzle game. Solve equations, unlock levels, and compete with classmates for the highest score!",
+                url: "https://www.mathplayground.com/embed_puzzle.html?puzzle=2048", // Using 'url'
+                thumbnail: "https://placehold.co/400x100/ADD8E6/000000?text=Math+Challenge", // Using 'thumbnail'
+                color: "blue"
+            },
+            {
+                id: "sample2",
+                title: "2048 Puzzle",
+                description: "A classic number puzzle. Combine tiles to reach the 2048 tile!",
+                url: "https://www.crazygames.com/embed/2048-puzzle", // Using 'url'
+                thumbnail: "https://placehold.co/400x100/90EE90/000000?text=2048+Puzzle", // Using 'thumbnail'
+                color: "purple"
+            },
+            {
+                id: "sample3",
+                title: "Science Lab: Chemical Equations",
+                description: "Perform experiments and discover new elements. Mix chemicals, observe reactions, and learn the principles of physics in this interactive lab!",
+                url: "https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_en.html", // Using 'url'
+                thumbnail: "https://placehold.co/400x100/FFB6C1/000000?text=Science+Lab", // Using 'thumbnail'
+                color: "green"
+            },
+            {
+                id: "sample4",
+                title: "Word Search",
+                description: "Build your vocabulary while solving puzzles. Find hidden words in a grid!",
+                url: "https://www.crazygames.com/embed/word-search", // Using 'url'
+                thumbnail: "https://placehold.co/400x100/FFD700/000000?text=Word+Search", // Using 'thumbnail'
+                color: "red"
+            },
+            {
+                id: "sample5",
+                title: "Physics Playground: Forces & Motion",
+                description: "Experiment with physics in this interactive sandbox. Build structures, test gravity, and discover how the physical world works!",
+                url: "https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html", // Using 'url'
+                thumbnail: "https://placehold.co/400x100/DDA0DD/000000?text=Physics+Playground", // Using 'thumbnail'
+                color: "orange"
+            },
+            {
+                id: "sample6",
+                title: "World Flags Quiz",
+                description: "Discover countries, capitals and landmarks. Test your knowledge of world flags!",
+                url: "https://www.crazygames.com/embed/world-flags-quiz", // Using 'url'
+                thumbnail: "https://placehold.co/400x100/87CEEB/000000?text=World+Flags+Quiz", // Using 'thumbnail'
+                color: "pink"
+            }
+        ];
+    </script>
+
     <script>
-        // Simple script to handle active nav items
-        document.addEventListener('DOMContentLoaded', function() {
-            const navItems = document.querySelectorAll('.nav-item');
+        // DOM Elements
+        const gamesContainer = document.getElementById('games-container');
+        const gameModal = document.getElementById('gameModal');
+        const modalGameTitle = document.getElementById('modalGameTitle');
+        const modalGameDescription = document.getElementById('modalGameDescription');
+        const gameEmbed = document.getElementById('gameEmbed');
+        const fullScreenButton = document.getElementById('fullScreenButton');
+        const closeModal = document.getElementById('closeModal');
+        const muteBtn = document.getElementById('muteBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const userIdDisplay = document.getElementById('currentUserIdDisplay');
+
+        // Currently selected game
+        let currentGame = null;
+        let isMuted = false;
+
+        // Function to create a game card
+        function createGameCard(game) {
+            const card = document.createElement('div');
+            card.className = 'dashboard-card';
+            card.dataset.id = game.id;
             
+            // Set background image using the 'thumbnail' field
+            const headerStyle = game.thumbnail ? `background-image: url('${game.thumbnail}');` : '';
+
+            card.innerHTML = `
+                <div class="card-header ${game.color || 'blue'}" style="${headerStyle}"></div>
+                <div class="card-body">
+                    <h3 class="card-title">${game.title || 'Untitled Game'}</h3>
+                    <div class="card-subtitle">${game.description || 'No description available'}</div>
+                    <div class="card-meta">
+                        <div><i class="fas fa-play-circle"></i> Play Now</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add click event to show game details
+            card.addEventListener('click', () => {
+                showGameDetails(game);
+            });
+            
+            return card;
+        }
+
+        // Function to render game cards to the DOM
+        window.renderGameCards = function(games) {
+            gamesContainer.innerHTML = ''; // Clear existing cards
+            if (games.length === 0) {
+                // If no games are passed, or the array is empty, show empty state
+                gamesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No Games Available</h3>
+                        <p>It looks like there are no games added to the database yet. Check back later!</p>
+                    </div>
+                `;
+            } else {
+                games.forEach(game => {
+                    gamesContainer.appendChild(createGameCard(game));
+                });
+            }
+        };
+
+        // Function to show game details in modal
+        function showGameDetails(game) {
+            currentGame = game;
+            modalGameTitle.textContent = game.title;
+            modalGameDescription.textContent = game.description;
+            
+            // Load the embedded game using its 'url' field
+            gameEmbed.src = game.url || '';
+            
+            gameModal.classList.add('active');
+        }
+
+        // Function to show error state and fallback to sample data
+        window.showErrorState = function() {
+            gamesContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Connection Error</h3>
+                    <p>Could not connect to Firebase or load data. Displaying sample games.</p>
+                </div>
+            `;
+            window.renderGameCards(window.sampleGames); // Fallback to sample data
+        };
+
+        // Initialize the page when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial rendering with loading cards, then Firebase will update
+            window.renderGameCards([]); // Clear any initial content and show empty state/loading
+            
+            // If Firebase is already initialized by the module script, start listener
+            // The module script will call window.initializeFirebaseListener once auth is ready.
+            // If for some reason auth is already ready and the listener isn't started (e.g., fast refresh),
+            // we can try to kick it off here.
+            if (window.db && window.auth && window.auth.currentUser) {
+                window.initializeFirebaseListener();
+            } else {
+                // Display initial loading state or prompt for Firebase to load
+                console.log("Waiting for Firebase to initialize and authenticate...");
+                gamesContainer.innerHTML = `
+                    <div class="loading-card"></div>
+                    <div class="loading-card"></div>
+                    <div class="loading-card"></div>
+                    <div class="loading-card"></div>
+                    <div class="loading-card"></div>
+                    <div class="loading-card"></div>
+                `;
+            }
+
+            // Set active nav item
+            const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
                     navItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                 });
+            });
+            
+            // Setup modal functionality
+            closeModal.addEventListener('click', () => {
+                gameModal.classList.remove('active');
+                // Reset the iframe source to stop any running games and clear memory
+                gameEmbed.src = ''; 
+            });
+            
+            fullScreenButton.addEventListener('click', () => {
+                if (currentGame && currentGame.url) { // Use 'url' here
+                    window.open(currentGame.url, '_blank');
+                }
+            });
+            
+            // Close modal when clicking outside
+            gameModal.addEventListener('click', (e) => {
+                if (e.target === gameModal) {
+                    gameModal.classList.remove('active');
+                    gameEmbed.src = ''; // Stop the game when modal is closed
+                }
+            });
+            
+            // Mute button functionality (placeholder for embedded iframes)
+            muteBtn.addEventListener('click', () => {
+                isMuted = !isMuted;
+                muteBtn.innerHTML = isMuted ? 
+                    '<i class="fas fa-volume-mute"></i> Unmute' : 
+                    '<i class="fas fa-volume-up"></i> Mute';
+                
+                // IMPORTANT: Direct control over embedded iframe audio is generally not possible due to browser security policies.
+                // This button provides a visual toggle but won't mute the actual game.
+                console.log(isMuted ? "Game muted (visual only)" : "Game unmuted (visual only)");
+            });
+            
+            // Restart button functionality
+            restartBtn.addEventListener('click', () => {
+                // Refresh the iframe to restart the game
+                if (gameEmbed.src) { // Only restart if a game is loaded
+                    gameEmbed.src = gameEmbed.src;
+                }
             });
         });
     </script>
