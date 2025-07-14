@@ -17,7 +17,7 @@
         :root {
             --header-bg: #2a303a;
             --sidebar-bg: #334451;
-            --sbhs-dark-blue: #2d3b45;
+            --sbhs-dark-blue: #2d3b40; /* Slightly adjusted for better contrast */
             --sbhs-light-gray: #f5f5f5;
             --sbhs-border-gray: #c7cdd1;
             --sbhs-red: #d41e00;
@@ -33,6 +33,7 @@
             color: #333;
             display: flex;
             min-height: 100vh;
+            flex-direction: column; /* Allow content to stack vertically */
         }
         
         /* Top Header */
@@ -41,7 +42,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
+            height: 50px; 
             background-color: var(--header-bg);
             color: white;
             display: flex;
@@ -57,10 +58,22 @@
             gap: 15px;
         }
         
-        .grid-icon {
-            font-size: 22px;
-            color: white;
+        /* Custom 3x3 Grid Icon */
+        .custom-grid-icon {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 20px; 
+            height: 20px; 
+            gap: 1px; 
             opacity: 0.9;
+        }
+
+        .custom-grid-icon .square {
+            width: 5px; 
+            height: 5px; 
+            background-color: white; 
+            border-radius: 1px; 
         }
         
         .school-name {
@@ -77,10 +90,10 @@
         
         /* Sidebar */
         .sidebar {
-            width: 80px;
+            width: 70px; /* Increased width from 50px to 70px */
             background-color: var(--sidebar-bg);
             position: fixed;
-            top: 60px;
+            top: 50px; 
             bottom: 0;
             left: 0;
             z-index: 90;
@@ -117,8 +130,8 @@
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-top: 60px;
-            margin-left: 80px;
+            margin-top: 50px; 
+            margin-left: 70px; /* Adjusted margin-left to match new sidebar width */
             padding: 30px;
         }
         
@@ -167,13 +180,13 @@
             font-size: 12px;
             color: #6c757d;
             margin-top: 5px;
-            word-break: break-all; /* Ensures long IDs wrap */
+            word-break: break-all; 
         }
         
         /* Cards Grid */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Decreased minmax width slightly */
             gap: 20px;
         }
         
@@ -194,11 +207,33 @@
         }
         
         .card-header {
-            height: 100px;
+            height: 150px; 
             position: relative;
             background-size: cover;
             background-position: center;
-            background-color: #f0f0f0; /* Fallback if image fails */
+            background-color: #f0f0f0; 
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: 10px;
+        }
+
+        .card-header .options-icon {
+            color: white;
+            font-size: 20px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .card-header .options-icon:hover {
+            background-color: rgba(0, 0, 0, 0.6);
         }
         
         .card-header.blue {
@@ -233,29 +268,67 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 5px;
-            color: var(--sbhs-dark-blue);
+            color: #2f6b9e; 
+            text-decoration: underline; 
+            white-space: nowrap; /* Ensure title stays on one line */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .card-subtitle {
             font-size: 15px;
-            color: #6c757d;
-            margin-bottom: 15px;
-            min-height: 40px;
+            color: #2f6b9e; 
+            text-decoration: underline; 
+            margin-bottom: 10px; 
+            min-height: 20px; /* Adjusted min-height for single line */
+            white-space: nowrap; /* Force text to a single line */
+            overflow: hidden; /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+        }
+
+        .game-tags { /* Removed from HTML, but keeping CSS if needed for future */
+            display: none; /* Hide tags */
+        }
+
+        .game-tag {
+            background-color: #e0e0e0;
+            color: #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
         }
         
         .card-meta {
             display: flex;
             justify-content: space-between;
+            align-items: center; 
             color: #6c757d;
             font-size: 14px;
             padding-top: 15px;
             border-top: 1px solid var(--sbhs-border-gray);
         }
         
-        .card-meta i {
-            margin-right: 5px;
+        .card-meta .meta-icons {
+            display: flex;
+            gap: 10px;
         }
-        
+
+        .card-meta .meta-icons i {
+            font-size: 18px; 
+            color: #888;
+            cursor: default; 
+            margin-right: 0; 
+        }
+
+        .card-meta .play-icon-only { 
+            display: flex;
+            align-items: center;
+        }
+
+        .card-meta .play-icon-only i {
+            margin-right: 0; 
+        }
+
         .loading-card {
             height: 200px;
             background: #f8f9fa;
@@ -320,7 +393,7 @@
             background: white;
             border-radius: 10px;
             width: 90%;
-            max-width: 800px; /* Increased max-width for larger player */
+            max-width: 800px; 
             max-height: 90vh;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -341,7 +414,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; /* Prevent header from shrinking */
+            flex-shrink: 0; 
         }
         
         .modal-title {
@@ -370,9 +443,9 @@
         
         .modal-content {
             padding: 25px;
-            max-height: calc(90vh - 100px); /* Adjust max-height based on header/footer if any */
+            max-height: calc(90vh - 100px); 
             overflow-y: auto;
-            flex-grow: 1; /* Allow content to grow */
+            flex-grow: 1; 
         }
         
         .game-description {
@@ -383,8 +456,8 @@
         
         .game-player {
             background: #f1f1ef;
-            height: 500px; /* Made larger */
-            width: 100%; /* Ensure it takes full width */
+            height: 500px; 
+            width: 100%; 
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -400,8 +473,6 @@
             height: 100%;
             border: none;
         }
-        
-        /* Removed .game-player .player-overlay as it's not needed with a working iframe */
         
         .play-button {
             display: block;
@@ -448,6 +519,25 @@
             border-color: #b0b0b0;
         }
         
+        /* Footer styles */
+        .app-footer {
+            margin-top: auto; 
+            padding: 15px 30px;
+            background-color: var(--header-bg); 
+            color: #d0d4d8;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; 
+            gap: 10px;
+        }
+
+        .app-footer .status-indicator,
+        .app-footer .user-id-display {
+            margin: 0; 
+        }
+        
         /* Responsive design */
         @media (max-width: 768px) {
             .cards-grid {
@@ -459,11 +549,16 @@
             }
             
             .game-player {
-                height: 400px; /* Adjusted for smaller screens */
+                height: 400px; 
             }
 
             .game-modal {
                 max-width: 95%;
+            }
+
+            .app-footer {
+                justify-content: center;
+                text-align: center;
             }
         }
         
@@ -485,7 +580,7 @@
             }
             
             .game-player {
-                height: 300px; /* Adjusted for very small screens */
+                height: 300px; 
             }
 
             .controls {
@@ -496,17 +591,30 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .app-footer {
+                flex-direction: column;
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="top-header">
         <div class="logo-container">
-            <div class="grid-icon">
-                <i class="fas fa-th"></i>
+            <div class="custom-grid-icon">
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
+                <div class="square"></div>
             </div>
             <div>
-                <span class="school-name"></span>
+                <span class="school-name">SYDNEY BOYS HIGH SCHOOL</span>
                 <span class="canvas-name">Canvas 9VA9</span>
             </div>
         </div>
@@ -550,11 +658,6 @@
     <div class="main-content">
         <div class="dashboard-header">
             <h1 class="dashboard-title">Dashboard</h1>
-            <div class="status-indicator">
-                <div class="dot"></div>
-                <span>Connected to Firebase - Real-time updates active</span>
-            </div>
-            <div class="user-id-display" id="currentUserIdDisplay">User ID: Loading...</div>
         </div>
         
         <div class="cards-grid" id="games-container">
@@ -596,6 +699,14 @@
             </div>
         </div>
     </div>
+
+    <footer class="app-footer">
+        <div class="status-indicator">
+            <div class="dot"></div>
+            <span>Connected to Firebase - Real-time updates active</span>
+        </div>
+        <div class="user-id-display" id="currentUserIdDisplay">User ID: Loading...</div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -707,51 +818,81 @@
         window.sampleGames = [
             {
                 id: "sample1",
-                title: "Math Challenge",
+                title: "9 Mathematics Stage 5 U (2025)",
                 description: "Test your math skills in this exciting puzzle game. Solve equations, unlock levels, and compete with classmates for the highest score!",
                 url: "https://www.mathplayground.com/embed_puzzle.html?puzzle=2048", // Using 'url'
-                thumbnail: "https://placehold.co/400x100/ADD8E6/000000?text=Math+Challenge", // Using 'thumbnail'
-                color: "blue"
+                thumbnail: "https://placehold.co/400x150/ADD8E6/000000?text=Math+Challenge+Image", // Using 'thumbnail'
+                color: "blue",
+                tags: ["Mathematics", "Stage 5", "2025"],
+                placeholderIcons: {
+                    icon1: "fas fa-user", // Example icon
+                    icon2: "fas fa-edit" // Example icon
+                }
             },
             {
                 id: "sample2",
                 title: "2048 Puzzle",
                 description: "A classic number puzzle. Combine tiles to reach the 2048 tile!",
                 url: "https://www.crazygames.com/embed/2048-puzzle", // Using 'url'
-                thumbnail: "https://placehold.co/400x100/90EE90/000000?text=2048+Puzzle", // Using 'thumbnail'
-                color: "purple"
+                thumbnail: "https://placehold.co/400x150/90EE90/000000?text=2048+Puzzle+Image", // Using 'thumbnail'
+                color: "purple",
+                tags: ["Puzzle", "Strategy"],
+                placeholderIcons: {
+                    icon1: "fas fa-star",
+                    icon2: "fas fa-share-alt"
+                }
             },
             {
                 id: "sample3",
                 title: "Science Lab: Chemical Equations",
                 description: "Perform experiments and discover new elements. Mix chemicals, observe reactions, and learn the principles of physics in this interactive lab!",
                 url: "https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_en.html", // Using 'url'
-                thumbnail: "https://placehold.co/400x100/FFB6C1/000000?text=Science+Lab", // Using 'thumbnail'
-                color: "green"
+                thumbnail: "https://placehold.co/400x150/FFB6C1/000000?text=Science+Lab+Image", // Using 'thumbnail'
+                color: "green",
+                tags: ["Science", "Chemistry", "Simulation"],
+                placeholderIcons: {
+                    icon1: "fas fa-flask",
+                    icon2: "fas fa-chart-bar"
+                }
             },
             {
                 id: "sample4",
                 title: "Word Search",
                 description: "Build your vocabulary while solving puzzles. Find hidden words in a grid!",
                 url: "https://www.crazygames.com/embed/word-search", // Using 'url'
-                thumbnail: "https://placehold.co/400x100/FFD700/000000?text=Word+Search", // Using 'thumbnail'
-                color: "red"
+                thumbnail: "https://placehold.co/400x150/FFD700/000000?text=Word+Search+Image", // Using 'thumbnail'
+                color: "red",
+                tags: ["Language", "Puzzle", "Vocabulary"],
+                placeholderIcons: {
+                    icon1: "fas fa-book",
+                    icon2: "fas fa-lightbulb"
+                }
             },
             {
                 id: "sample5",
                 title: "Physics Playground: Forces & Motion",
                 description: "Experiment with physics in this interactive sandbox. Build structures, test gravity, and discover how the physical world works!",
                 url: "https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html", // Using 'url'
-                thumbnail: "https://placehold.co/400x100/DDA0DD/000000?text=Physics+Playground", // Using 'thumbnail'
-                color: "orange"
+                thumbnail: "https://placehold.co/400x150/DDA0DD/000000?text=Physics+Playground+Image", // Using 'thumbnail'
+                color: "orange",
+                tags: ["Physics", "Simulation", "Experiment"],
+                placeholderIcons: {
+                    icon1: "fas fa-atom",
+                    icon2: "fas fa-ruler"
+                }
             },
             {
                 id: "sample6",
                 title: "World Flags Quiz",
                 description: "Discover countries, capitals and landmarks. Test your knowledge of world flags!",
                 url: "https://www.crazygames.com/embed/world-flags-quiz", // Using 'url'
-                thumbnail: "https://placehold.co/400x100/87CEEB/000000?text=World+Flags+Quiz", // Using 'thumbnail'
-                color: "pink"
+                thumbnail: "https://placehold.co/400x150/87CEEB/000000?text=World+Flags+Quiz+Image", // Using 'thumbnail'
+                color: "pink",
+                tags: ["Geography", "Quiz", "World"],
+                placeholderIcons: {
+                    icon1: "fas fa-globe-americas",
+                    icon2: "fas fa-map-marker-alt"
+                }
             }
         ];
     </script>
@@ -782,13 +923,31 @@
             // Set background image using the 'thumbnail' field
             const headerStyle = game.thumbnail ? `background-image: url('${game.thumbnail}');` : '';
 
+            // Generate tags HTML - now always empty as per request
+            const tagsHtml = ''; 
+            
+            // Generate placeholder icons HTML
+            const placeholderIconsHtml = (game.placeholderIcons) ? `
+                <div class="meta-icons">
+                    ${game.placeholderIcons.icon1 ? `<i class="${game.placeholderIcons.icon1}"></i>` : ''}
+                    ${game.placeholderIcons.icon2 ? `<i class="${game.placeholderIcons.icon2}"></i>` : ''}
+                </div>
+            ` : '';
+
+
             card.innerHTML = `
-                <div class="card-header ${game.color || 'blue'}" style="${headerStyle}"></div>
+                <div class="card-header ${game.color || 'blue'}" style="${headerStyle}">
+                    <div class="options-icon">
+                        <i class="fas fa-ellipsis-v"></i> <!-- Vertical 3 dots icon -->
+                    </div>
+                </div>
                 <div class="card-body">
+                    <div class="card-subtitle">${game.description || 'No description available'}</div> <!-- Description moved above title -->
                     <h3 class="card-title">${game.title || 'Untitled Game'}</h3>
-                    <div class="card-subtitle">${game.description || 'No description available'}</div>
+                    ${tagsHtml} <!-- Tags removed -->
                     <div class="card-meta">
-                        <div><i class="fas fa-play-circle"></i> Play Now</div>
+                        <div class="play-icon-only"><i class="fas fa-play-circle"></i></div> <!-- Removed "Play Now" text -->
+                        ${placeholderIconsHtml} <!-- Insert placeholder icons here -->
                     </div>
                 </div>
             `;
@@ -886,7 +1045,7 @@
             });
             
             fullScreenButton.addEventListener('click', () => {
-                if (currentGame && currentGame.url) { // Use 'url' here
+                if (currentGame && currentGame.url) { 
                     window.open(currentGame.url, '_blank');
                 }
             });
@@ -895,7 +1054,7 @@
             gameModal.addEventListener('click', (e) => {
                 if (e.target === gameModal) {
                     gameModal.classList.remove('active');
-                    gameEmbed.src = ''; // Stop the game when modal is closed
+                    gameEmbed.src = ''; 
                 }
             });
             
@@ -906,15 +1065,12 @@
                     '<i class="fas fa-volume-mute"></i> Unmute' : 
                     '<i class="fas fa-volume-up"></i> Mute';
                 
-                // IMPORTANT: Direct control over embedded iframe audio is generally not possible due to browser security policies.
-                // This button provides a visual toggle but won't mute the actual game.
                 console.log(isMuted ? "Game muted (visual only)" : "Game unmuted (visual only)");
             });
             
             // Restart button functionality
             restartBtn.addEventListener('click', () => {
-                // Refresh the iframe to restart the game
-                if (gameEmbed.src) { // Only restart if a game is loaded
+                if (gameEmbed.src) { 
                     gameEmbed.src = gameEmbed.src;
                 }
             });
